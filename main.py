@@ -62,6 +62,25 @@ def add_button_pressed():
             file_x.close()
 
 
+def find_password():
+    try:
+        given_website = website_entry.get()
+        file_x = open("passwords.json", "r")
+        data = json.load(file_x)
+    except FileNotFoundError:
+        messagebox.showinfo(title="Error", message="No Data File Found.")
+    else:
+        if given_website in data:
+            email = data[given_website]["email"]
+            password = data[given_website]["password"]
+            messagebox.showinfo(title=given_website, message=f"Email: {email}"
+                                                             f"\nPassword: {password}")
+        else:
+            messagebox.showinfo(title="Error", message=f"No detail for {given_website} exist!")
+
+        file_x.close()
+
+
 # ---------------------------- UI SETUP ------------------------------- #
 window = Tk()
 window.title("Password Manager")
@@ -74,10 +93,11 @@ website_label = Label(text="Website:")
 email_label = Label(text="Email/Username:")
 password_label = Label(text="Password:")
 # Buttons
+search_button = Button(text="Search", width=17)
 generate_button = Button(text="Generate Password", bg="Black", command=generate_pass)
 add_button = Button(text="Add", width=36, command=add_button_pressed)
 # entries
-website_entry = Entry(width=35)
+website_entry = Entry(width=18)
 email_entry = Entry(width=35)
 email_entry.insert(0, "ethan.bhm@outlook.com")
 password_entry = Entry(width=17)
@@ -85,9 +105,10 @@ canvas.grid(row=0, column=1)
 website_label.grid(row=1, column=0)
 email_label.grid(row=2, column=0)
 password_label.grid(row=3, column=0)
-website_entry.grid(row=1, column=1, columnspan=2)
+website_entry.grid(row=1, column=1)
 email_entry.grid(row=2, column=1, columnspan=2)
 password_entry.grid(row=3, column=1)
+search_button.grid(row=1, column=2)
 generate_button.grid(row=3, column=2)
 add_button.grid(row=4, column=1, columnspan=2)
 
