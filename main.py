@@ -1,8 +1,10 @@
 from tkinter import *
 from tkinter import messagebox
 import random
-#to make a copy of the password in the clipboard
+# to make a copy of the password in the clipboard
 import pyperclip
+import json
+
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 def generate_pass():
@@ -34,19 +36,27 @@ def generate_pass():
 
 
 def add_button_pressed():
+    new_data = {website_entry.get(): {
+        "email": email_entry.get(),
+        "password": password_entry.get(),
+    }}
     if len(website_entry.get()) == 0:
         messagebox.showinfo(message="Website field is empty!")
     elif len(password_entry.get()) == 0:
         messagebox.showinfo(message="Password field is empty!")
     else:
-        is_ok = messagebox.askokcancel(title=website_entry.get(), message=f"These are the details entered: "
-                                                                          f"\nEmail: {email_entry.get()}"
-                                                                          f"\nPassword: {password_entry.get()}"
-                                                                          f"\nIs it ok to save?")
-        if is_ok:
-            # https://www.w3schools.com/python/python_file_write.asp
-            file_x = open("passwords.txt", "a")
-            file_x.write(f"{website_entry.get()} | {email_entry.get()} | {password_entry.get()}\n")
+        # https://www.w3schools.com/python/python_file_write.asp
+        try:
+            file_x = open("passwords.json", "r")
+            data = json.load(file_x)
+        except FileNotFoundError:
+            file_x = open("passwords.json", "w")
+            json.dump(new_data, file_x, indent=4)
+        else:
+            data.update(new_data)
+            file_x = open("passwords.json", "w")
+            json.dump(data, file_x, indent=4)
+        finally:
             website_entry.delete(0, END)
             password_entry.delete(0, END)
             file_x.close()
